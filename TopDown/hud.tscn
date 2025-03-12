@@ -1,0 +1,44 @@
+[gd_scene load_steps=2 format=3 uid="uid://dod26j4tptx6j"]
+
+[sub_resource type="GDScript" id="GDScript_n2snw"]
+script/source = "extends Node2D
+
+# Nosso HUD nao tem nenhum processamento. Ele serve
+# apenas para visualizacao das informacoes. Veja que
+# a cada game loop buscamos as informacoes do World
+# com get_parent() e colocamos elas nos Labels
+func _physics_process(_delta: float) -> void:
+	$InfoScore.text = str(get_parent().score)
+	$InfoTimeout.text = str(int(get_parent().get_node(\"Timer\").time_left))
+"
+
+[node name="hud" type="Node2D"]
+script = SubResource("GDScript_n2snw")
+
+[node name="LabelScore" type="Label" parent="."]
+offset_left = 280.0
+offset_top = -79.0
+offset_right = 336.0
+offset_bottom = -56.0
+text = "SCORE:"
+
+[node name="InfoScore" type="Label" parent="."]
+offset_left = 347.0
+offset_top = -80.0
+offset_right = 387.0
+offset_bottom = -57.0
+text = "000"
+
+[node name="LabelTimeout" type="Label" parent="."]
+offset_left = 97.0
+offset_top = -80.0
+offset_right = 173.0
+offset_bottom = -57.0
+text = "TIMEOUT:"
+
+[node name="InfoTimeout" type="Label" parent="."]
+offset_left = 181.0
+offset_top = -80.0
+offset_right = 221.0
+offset_bottom = -57.0
+text = "000"

@@ -1,0 +1,102 @@
+[gd_scene load_steps=11 format=3 uid="uid://3ay6tmm54a71"]
+
+[ext_resource type="PackedScene" uid="uid://dv1smv3y06f2m" path="res://maze.tscn" id="1_ioo17"]
+[ext_resource type="PackedScene" uid="uid://35iwvpb1ct7w" path="res://player.tscn" id="2_wse8f"]
+[ext_resource type="PackedScene" uid="uid://dod26j4tptx6j" path="res://hud.tscn" id="3_ic0uy"]
+[ext_resource type="PackedScene" uid="uid://banbdspmx0eqk" path="res://turtle.tscn" id="4_k3n1d"]
+[ext_resource type="PackedScene" uid="uid://wtwgtq2iqdb3" path="res://candy.tscn" id="5_2o6r5"]
+[ext_resource type="AudioStream" uid="uid://dx3dfghnjp86b" path="res://music_normal.ogg" id="6_70uel"]
+[ext_resource type="AudioStream" uid="uid://bbspxwl5jijk1" path="res://music_super.ogg" id="7_hiqwa"]
+[ext_resource type="Texture2D" uid="uid://dx5uv1paa7thc" path="res://gameover.png" id="8_2u3nc"]
+[ext_resource type="AudioStream" uid="uid://coibfox5uqwch" path="res://gameover.wav" id="9_udxuc"]
+
+[sub_resource type="GDScript" id="GDScript_ioo17"]
+script/source = "extends Node2D
+# variavel contendo nossa pontuacao
+var score: int = 0
+
+# Comportamento do jogo quando o Player morre
+func game_over() -> void:
+	$MusicNormal.stop()               # Para a musica normal
+	$MusicSuper.stop()                # Para a musica Super se estiver tocando
+	$SoundGameOver.play()             # Toca o som de Game Over
+	$GameOverImage.visible = true     # Torna a imagem de Game Over visivel
+
+# Altera o tipo da musica. Se a entrada for True,
+# toca a musica Super, senao a musica normal
+func change_music(superPower) -> void:
+	if superPower:                    # Se esta no modo super
+		$MusicNormal.stop()           # Desliga a musica normal
+		$MusicSuper.play()            # E liga a musica animada
+	else:                             # Senao
+		$MusicSuper.stop()            # Desliga a musica animada
+		$MusicNormal.play()           # E liga a musica normal
+
+# O Player chama essa funcao quando mata uma tartaruga.
+# Nao eh algo muito legal de se fazer, matar tartarugas,
+# mas eh soh um jogo de exemplo, entao vamos relevar.
+func make_point() -> void:
+	$Timer.start($Timer.time_left + 5) # Aumenta o tempo restante em 5
+	score += 1                         # Aumenta a pontuacao em 1
+
+# Essa funcao eh chamada quando o Timer chega a 0,
+# ou seja, deu timeout.
+func _on_timer_timeout() -> void:
+	$Player.kill()                     # O Player morre
+"
+
+[node name="world" type="Node2D"]
+script = SubResource("GDScript_ioo17")
+
+[node name="maze" parent="." instance=ExtResource("1_ioo17")]
+
+[node name="player" parent="." instance=ExtResource("2_wse8f")]
+position = Vector2(371, 139)
+
+[node name="hud" parent="." instance=ExtResource("3_ic0uy")]
+position = Vector2(-624, 32)
+
+[node name="turtle" parent="." instance=ExtResource("4_k3n1d")]
+position = Vector2(-206, -185)
+
+[node name="turtle2" parent="." instance=ExtResource("4_k3n1d")]
+position = Vector2(386, 411)
+
+[node name="turtle3" parent="." instance=ExtResource("4_k3n1d")]
+position = Vector2(-632, 273)
+
+[node name="candy2" parent="." instance=ExtResource("5_2o6r5")]
+position = Vector2(170, -132)
+
+[node name="candy3" parent="." instance=ExtResource("5_2o6r5")]
+position = Vector2(-174, 353)
+
+[node name="candy4" parent="." instance=ExtResource("5_2o6r5")]
+position = Vector2(117, 404)
+
+[node name="candy" parent="." instance=ExtResource("5_2o6r5")]
+position = Vector2(-55, -197)
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 10.0
+one_shot = true
+autostart = true
+
+[node name="MusicNormal" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(-744, 244)
+stream = ExtResource("6_70uel")
+autoplay = true
+
+[node name="MusicSuper" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(-693, -211)
+stream = ExtResource("7_hiqwa")
+
+[node name="GameOver" type="TextureRect" parent="."]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("8_2u3nc")
+
+[node name="SoundGameOver" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(-368, -16)
+stream = ExtResource("9_udxuc")
